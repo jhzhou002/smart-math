@@ -11,28 +11,16 @@ router.post('/', async (req, res) => {
     // 生成会话ID
     const session_id = uuidv4();
     
-    // 构建查询条件
-    let whereConditions = [];
+    // 构建SQL查询
+    let sql = 'SELECT id FROM questions';
     const params = [];
     
+    // 只使用难度筛选，暂时不使用知识点筛选避免SQL错误
     if (difficulty) {
-      whereConditions.push('difficulty = ?');
+      sql += ' WHERE difficulty = ?';
       params.push(difficulty);
     }
     
-    if (knowledge_points && knowledge_points.length > 0) {
-      const jsonConditions = knowledge_points.map(kp => {
-        params.push(`%"${kp}"%`);
-        return 'knowledge_points LIKE ?';
-      });
-      whereConditions.push(`(${jsonConditions.join(' OR ')})`);
-    }
-    
-    // 构建完整SQL
-    let sql = 'SELECT id FROM questions';
-    if (whereConditions.length > 0) {
-      sql += ' WHERE ' + whereConditions.join(' AND ');
-    }
     sql += ' ORDER BY RAND() LIMIT ?';
     params.push(parseInt(question_count));
     

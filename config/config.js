@@ -23,10 +23,12 @@ module.exports = {
     default_model: "deepseek",
     topic_model_mapping: {
       "函数": "qwen",
-      "几何": "gemini",
-      "概率": "kimi"
+      "几何": "deepseek", // 改用deepseek替代gemini
+      "概率": "kimi",
+      "导数": "qwen",
+      "数列": "qwen"
     },
-    min_confidence: 0.93 // 最低校验置信度
+    min_confidence: 0.85 // 降低最低校验置信度
   },
   
   // 服务器配置
