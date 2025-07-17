@@ -254,11 +254,17 @@ export default {
         if (valid) {
           this.loading = true
           try {
-            const response = await api.createSession({
+            const sessionData = {
               question_count: this.config.questionCount,
-              difficulty: this.config.difficulty,
-              knowledge_points: this.config.knowledgePoints
-            })
+              difficulty: this.config.difficulty
+            }
+            
+            // 只有选择了知识点才传递
+            if (this.config.knowledgePoints && this.config.knowledgePoints.length > 0) {
+              sessionData.knowledge_points = this.config.knowledgePoints
+            }
+            
+            const response = await api.createSession(sessionData)
             
             this.sessionId = response.data.session_id
             this.totalQuestions = response.data.total_questions

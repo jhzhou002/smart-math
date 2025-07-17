@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const config = require('../config/config');
+const { testConnection, initDatabase } = require('./models/database');
 
 const app = express();
 
@@ -52,9 +53,27 @@ app.use((req, res) => {
 });
 
 const PORT = config.SERVER_CONFIG.port;
-app.listen(PORT, () => {
-  console.log(`🚀 服务器运行在端口 ${PORT}`);
-  console.log(`📖 API文档: http://localhost:${PORT}/health`);
-});
+
+// 启动服务器
+async function startServer() {
+  try {
+    // 测试数据库连接
+    await testConnection();
+    
+    // 初始化数据库
+    await initDatabase();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 服务器运行在端口 ${PORT}`);
+      console.log(`📖 API文档: http://localhost:${PORT}/health`);
+      console.log(`💾 数据库连接正常`);
+    });
+  } catch (error) {
+    console.error('❌ 服务器启动失败:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;

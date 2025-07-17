@@ -11,23 +11,33 @@ router.post('/', async (req, res) => {
     // 生成会话ID
     const session_id = uuidv4();
     
-    // 获取题目
-    let sql = 'SELECT id FROM questions WHERE 1=1';
+    // 构建查询条件
+    let whereConditions = [];
     const params = [];
     
     if (difficulty) {
-      sql += ' AND difficulty = ?';
+      whereConditions.push('difficulty = ?');
       params.push(difficulty);
     }
     
     if (knowledge_points && knowledge_points.length > 0) {
-      const conditions = knowledge_points.map(() => 'JSON_CONTAINS(knowledge_points, ?)').join(' OR ');
-      sql += ` AND (${conditions})`;
-      knowledge_points.forEach(kp => params.push(JSON.stringify(kp)));
+      const jsonConditions = knowledge_points.map(kp => {
+        params.push(JSON.stringify(kp));
+        return 'JSON_CONTAINS(knowledge_points, ?)';
+      });
+      whereConditions.push(`(${jsonConditions.join(' OR ')})`);
     }
     
+    // 构建完整SQL
+    let sql = 'SELECT id FROM questions';
+    if (whereConditions.length > 0) {
+      sql += ' WHERE ' + whereConditions.join(' AND ');
+    }
     sql += ' ORDER BY RAND() LIMIT ?';
     params.push(parseInt(question_count));
+    
+    console.log('执行SQL:', sql);
+    console.log('参数:', params);
     
     const questions = await query(sql, params);
     

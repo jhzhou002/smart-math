@@ -61,6 +61,14 @@ async function transaction(queries) {
 // 初始化数据库
 async function initDatabase() {
   try {
+    // 检查questions表是否存在数据
+    const existingQuestions = await query('SELECT COUNT(*) as count FROM questions');
+    
+    if (existingQuestions[0].count > 0) {
+      console.log('📊 数据库已有数据，跳过初始化');
+      return;
+    }
+    
     // 读取schema.sql并执行
     const fs = require('fs');
     const path = require('path');
@@ -68,17 +76,18 @@ async function initDatabase() {
     
     if (fs.existsSync(schemaPath)) {
       const schema = fs.readFileSync(schemaPath, 'utf8');
-      const statements = schema.split(';').filter(stmt => stmt.trim());
       
-      for (const statement of statements) {
-        if (statement.trim()) {
-          await query(statement);
-        }
+      // 只执行INSERT语句
+      const insertMatch = schema.match(/INSERT INTO questions[\s\S]*$/);
+      if (insertMatch) {
+        const insertStatement = insertMatch[0];
+        await query(insertStatement);
+        console.log('✅ 示例数据插入完成');
       }
-      console.log('✅ 数据库表初始化完成');
     }
   } catch (error) {
-    console.error('❌ 数据库初始化失败:', error);
+    console.error('❌ 数据库初始化失败:', error.message);
+    // 不要抛出错误，允许服务器继续启动
   }
 }
 
