@@ -22,8 +22,8 @@ router.post('/', async (req, res) => {
     
     if (knowledge_points && knowledge_points.length > 0) {
       const jsonConditions = knowledge_points.map(kp => {
-        params.push(JSON.stringify(kp));
-        return 'JSON_CONTAINS(knowledge_points, ?)';
+        params.push(`%"${kp}"%`);
+        return 'knowledge_points LIKE ?';
       });
       whereConditions.push(`(${jsonConditions.join(' OR ')})`);
     }

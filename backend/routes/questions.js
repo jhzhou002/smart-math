@@ -22,8 +22,8 @@ router.get('/', async (req, res) => {
     }
     
     if (knowledge_point) {
-      sql += ' AND JSON_CONTAINS(knowledge_points, ?)';
-      params.push(JSON.stringify(knowledge_point));
+      sql += ' AND knowledge_points LIKE ?';
+      params.push(`%"${knowledge_point}"%`);
     }
     
     // 分页
@@ -104,8 +104,8 @@ router.get('/random/:count', async (req, res) => {
     }
     
     if (knowledge_point) {
-      sql += ' AND JSON_CONTAINS(knowledge_points, ?)';
-      params.push(JSON.stringify(knowledge_point));
+      sql += ' AND knowledge_points LIKE ?';
+      params.push(`%"${knowledge_point}"%`);
     }
     
     sql += ' ORDER BY RAND() LIMIT ?';

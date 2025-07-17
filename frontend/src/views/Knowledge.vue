@@ -174,6 +174,7 @@
 <script>
 import katex from 'katex'
 import api from '../services/api'
+import { reactive } from 'vue'
 
 export default {
   name: 'Knowledge',
@@ -194,7 +195,7 @@ export default {
           '函数综合', '导数综合', '复数', '排列组合', '二项式定理'
         ]
       },
-      generating: {},
+      generating: reactive({}),
       
       // 题目生成
       generateForm: {
@@ -232,7 +233,7 @@ export default {
     },
     
     async generateQuestions(point) {
-      this.$set(this.generating, point, true)
+      this.generating[point] = true
       
       try {
         const response = await api.generateQuestions({
@@ -251,7 +252,7 @@ export default {
       } catch (error) {
         this.$message.error('生成题目失败：' + error.message)
       } finally {
-        this.$set(this.generating, point, false)
+        this.generating[point] = false
       }
     },
     
