@@ -27,6 +27,17 @@ router.post('/', async (req, res) => {
     console.log('执行SQL:', sql);
     console.log('参数:', params);
     
+    // 先检查表是否存在
+    try {
+      await query('SELECT 1 FROM questions LIMIT 1');
+    } catch (tableError) {
+      console.error('questions表不存在或无法访问:', tableError.message);
+      return res.status(500).json({ 
+        success: false, 
+        error: '数据库未初始化，请运行: npm run dev:migrate' 
+      });
+    }
+    
     const questions = await query(sql, params);
     
     if (questions.length === 0) {
