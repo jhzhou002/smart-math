@@ -47,13 +47,13 @@ cd smart-math
 
 ### 2. 安装依赖
 ```bash
-# 安装根目录依赖
+# 方式1：使用安装脚本 (推荐)
+chmod +x install.sh
+./install.sh
+
+# 方式2：手动安装
 npm install
-
-# 安装后端依赖
 cd backend && npm install
-
-# 安装前端依赖
 cd ../frontend && npm install
 ```
 

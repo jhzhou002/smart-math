@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import katex from 'katex'
 import api from '../services/api'
 
 export default {
@@ -284,16 +285,31 @@ export default {
     renderMath(content) {
       if (!content) return ''
       
-      // 简单的 LaTeX 渲染
       try {
-        // 处理行内公式 $...$
-        content = content.replace(/\$([^$]+)\$/g, (match, formula) => {
-          return `<span class="math-inline">${formula}</span>`
-        })
-        
         // 处理块级公式 $$...$$
         content = content.replace(/\$\$([^$]+)\$\$/g, (match, formula) => {
-          return `<div class="math-block">${formula}</div>`
+          try {
+            const rendered = katex.renderToString(formula.trim(), {
+              displayMode: true,
+              throwOnError: false
+            })
+            return `<div class="math-block">${rendered}</div>`
+          } catch (e) {
+            return `<div class="math-block">${formula}</div>`
+          }
+        })
+        
+        // 处理行内公式 $...$
+        content = content.replace(/\$([^$]+)\$/g, (match, formula) => {
+          try {
+            const rendered = katex.renderToString(formula.trim(), {
+              displayMode: false,
+              throwOnError: false
+            })
+            return `<span class="math-inline">${rendered}</span>`
+          } catch (e) {
+            return `<span class="math-inline">${formula}</span>`
+          }
         })
         
         return content
