@@ -19,9 +19,9 @@ npm install nodemon@3.0.1 --save-dev
 # 安装前端依赖
 echo "📦 安装前端依赖..."
 cd ../frontend
-npm install vue@3.3.4 vue-router@4.2.4 element-plus@2.3.8 axios@1.5.0 katex@0.16.8 --save
-npm install "@element-plus/icons-vue@2.1.0" --save
-npm install "@vitejs/plugin-vue@4.3.1" vite@4.4.9 --save-dev
+npm install vue@3.3.4 vue-router@4.2.4 element-plus@2.3.8 axios@1.5.0 katex@0.16.8 --save --legacy-peer-deps
+npm install "@element-plus/icons-vue@2.1.0" --save --legacy-peer-deps
+npm install vite@4.4.9 "@vitejs/plugin-vue@4.3.1" --save-dev --legacy-peer-deps
 
 echo "✅ 依赖安装完成！"
 echo "🔧 运行 npm run dev 启动开发服务器"
